@@ -3,60 +3,208 @@
   <head>
     <meta charset="UTF-8" />
 
+    <title>Crear Nueva Rifa</title>
+
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
+
+    <link rel="stylesheet" href="css/styles.css" />
   </head>
 
   <body>
-    <div class="container py-5">
-      <div class="d-flex justify-content-between mb-4">
-        <a href="admin-rifas.html" class="btn btn-success"> Volver </a>
+    <script>
+      if (localStorage.getItem("adminLogged") !== "true") {
+        window.location.href = "admin-login.html";
+      }
+
+      function logout() {
+        localStorage.removeItem("adminLogged");
+        localStorage.removeItem("adminEmail");
+        window.location.href = "admin-login.html";
+      }
+    </script>
+
+    <div class="admin-wrapper">
+      <!-- SIDEBAR -->
+
+      <div class="sidebar">
+        <div class="sidebar bg-dark text-white p-3">
+          <div class="mb-4 text-center">
+            <h4 class="fw-bold">⚙️ RifaMax</h4>
+            <small>Panel Admin</small>
+          </div>
+
+          <ul class="nav flex-column">
+            <li class="nav-item mb-2">
+              <a href="admin-dashboard.html" class="nav-link text-white">
+                📊 Dashboard
+              </a>
+            </li>
+
+            <li class="nav-item mb-2">
+              <a href="admin-rifas.html" class="nav-link text-white active">
+                🎟️ Rifas
+              </a>
+            </li>
+
+            <li class="nav-item mb-2">
+              <a
+                href="admin-validacion-sorteos.html"
+                class="nav-link text-white"
+              >
+                🏆 Validación Sorteos
+              </a>
+            </li>
+
+            <li class="nav-item mb-2">
+              <a href="admin-pagos.html" class="nav-link text-white">
+                💳 Pagos
+              </a>
+            </li>
+
+            <li class="nav-item mb-2">
+              <a href="admin-administradores.html" class="nav-link text-white">
+                🛡️ Administradores
+              </a>
+            </li>
+
+            <li class="nav-item mb-2">
+              <a href="admin-notificaciones.html" class="nav-link text-white">
+                🔔 Notificaciones
+              </a>
+            </li>
+
+            <li class="nav-item mb-2">
+              <a href="admin-configuracion.html" class="nav-link text-white">
+                ⚙️ Configuración
+              </a>
+            </li>
+
+            <hr />
+
+            <li class="nav-item">
+              <button class="btn btn-outline-light w-100" onclick="logout()">
+                🚪 Cerrar sesión
+              </button>
+            </li>
+          </ul>
+        </div>
       </div>
-      <div class="card shadow">
-        <div class="card-body p-4">
-          <h3 class="mb-4">Crear Nueva Rifa</h3>
 
-          <div class="mb-3">
-            <label> Nombre </label>
+      <!-- CONTENIDO -->
 
-            <input class="form-control" />
-          </div>
+      <div class="main-content">
+        <div class="topbar">
+          <h4>Crear Nueva Rifa</h4>
+        </div>
 
-          <div class="mb-3">
-            <label> Premio </label>
+        <div class="content-area">
+          <div class="card shadow-sm">
+            <div class="card-body p-4">
+              <div class="d-flex justify-content-between mb-4">
+                <h3>Nueva Rifa</h3>
 
-            <input class="form-control" />
-          </div>
+                <a href="admin-rifas.html" class="btn btn-secondary">
+                  ← Volver
+                </a>
+              </div>
 
-          <div class="mb-3">
-            <label> Descripción </label>
+              <form>
+                <div class="mb-3">
+                  <label class="form-label">Nombre de la Rifa</label>
 
-            <textarea class="form-control" rows="4"></textarea>
-          </div>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Ej: Mazda CX-30 2026"
+                  />
+                </div>
 
-          <div class="row">
-            <div class="col-md-4">
-              <label> Precio Boleta </label>
+                <div class="mb-3">
+                  <label class="form-label">Premio Principal</label>
 
-              <input class="form-control" />
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Ej: Mazda CX-30 Touring"
+                  />
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Descripción</label>
+
+                  <textarea
+                    class="form-control"
+                    rows="4"
+                    placeholder="Describe los detalles de la rifa..."
+                  ></textarea>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-4 mb-3">
+                    <label class="form-label">Precio por Boleta</label>
+
+                    <input
+                      type="number"
+                      class="form-control"
+                      placeholder="20000"
+                    />
+                  </div>
+
+                  <div class="col-md-4 mb-3">
+                    <label class="form-label">Cantidad de Boletas</label>
+
+                    <input
+                      type="number"
+                      class="form-control"
+                      placeholder="50000"
+                    />
+                  </div>
+
+                  <div class="col-md-4 mb-3">
+                    <label class="form-label">Fecha del Sorteo</label>
+
+                    <input type="date" class="form-control" />
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label"
+                    >Número Autorización Coljuegos</label
+                  >
+
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Ej: CJ-2026-001258"
+                  />
+                </div>
+
+                <div class="mb-4">
+                  <label class="form-label">Imagen de la Rifa</label>
+
+                  <input type="file" class="form-control" />
+                </div>
+
+                <div class="alert alert-info">
+                  <strong>Importante:</strong>
+                  La rifa se creará inicialmente en estado
+                  <strong>Borrador</strong> para revisión antes de su
+                  publicación.
+                </div>
+
+                <div class="d-flex gap-2">
+                  <button class="btn btn-success">Guardar Rifa</button>
+
+                  <a href="admin-rifas.html" class="btn btn-outline-secondary">
+                    Cancelar
+                  </a>
+                </div>
+              </form>
             </div>
-
-            <div class="col-md-4">
-              <label> Cantidad Boletas </label>
-
-              <input class="form-control" />
-            </div>
-
-            <div class="col-md-4">
-              <label> Fecha Sorteo </label>
-
-              <input type="date" class="form-control" />
-            </div>
           </div>
-
-          <button class="btn btn-success mt-4">Guardar</button>
         </div>
       </div>
     </div>
