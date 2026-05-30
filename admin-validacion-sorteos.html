@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>Validación de Sorteos</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+
+  <body>
+    <script>
+      if (localStorage.getItem("adminLogged") !== "true") {
+        window.location.href = "admin-login.html";
+      }
+
+      function logout() {
+        localStorage.removeItem("adminLogged");
+        localStorage.removeItem("adminEmail");
+        window.location.href = "admin-login.html";
+      }
+    </script>
+
+    <div class="admin-wrapper">
+      <!-- SIDEBAR -->
+
+      <div class="sidebar">
+        <div class="sidebar bg-dark text-white p-3">
+          <div class="mb-4 text-center">
+            <h4 class="fw-bold">⚙️ RifaMax</h4>
+            <small>Panel Admin</small>
+          </div>
+
+          <ul class="nav flex-column">
+            <li class="nav-item mb-2">
+              <a href="admin-dashboard.html" class="nav-link text-white">
+                📊 Dashboard
+              </a>
+            </li>
+
+            <li class="nav-item mb-2">
+              <a href="admin-rifas.html" class="nav-link text-white">
+                🎟️ Rifas
+              </a>
+            </li>
+
+            <li class="nav-item mb-2">
+              <a
+                href="admin-validacion-sorteos.html"
+                class="nav-link text-white active"
+              >
+                🏆 Validación Sorteos
+              </a>
+            </li>
+
+            <li class="nav-item mb-2">
+              <a href="admin-pagos.html" class="nav-link text-white">
+                💳 Pagos
+              </a>
+            </li>
+
+            <li class="nav-item mb-2">
+              <a href="admin-administradores.html" class="nav-link text-white">
+                🛡️ Administradores
+              </a>
+            </li>
+
+            <li class="nav-item mb-2">
+              <a href="admin-notificaciones.html" class="nav-link text-white">
+                🔔 Notificaciones
+              </a>
+            </li>
+
+            <li class="nav-item mb-2">
+              <a href="admin-configuracion.html" class="nav-link text-white">
+                ⚙️ Configuración
+              </a>
+            </li>
+
+            <hr />
+
+            <li class="nav-item">
+              <button class="btn btn-outline-light w-100" onclick="logout()">
+                🚪 Cerrar sesión
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- CONTENIDO -->
+
+      <div class="main-content">
+        <div class="topbar">
+          <h4>Validación de Sorteos</h4>
+        </div>
+
+        <div class="content-area">
+          <div class="card table-card">
+            <div class="card-body">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Rifa</th>
+                    <th>Número Detectado</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr>
+                    <td>Mazda CX-30</td>
+
+                    <td>4587</td>
+
+                    <td>
+                      <span class="badge bg-warning"> Pendiente </span>
+                    </td>
+
+                    <td>
+                      <button
+                        class="btn btn-success btn-sm"
+                        data-bs-toggle="modal"
+                        data-bs-target="#aprobarModal"
+                      >
+                        Aprobar
+                      </button>
+
+                      <button
+                        class="btn btn-warning btn-sm"
+                        data-bs-toggle="modal"
+                        data-bs-target="#corregirModal"
+                      >
+                        Corregir
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL -->
+
+    <div class="modal fade" id="corregirModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5>Corrección Manual</h5>
+          </div>
+
+          <div class="modal-body">
+            <div class="mb-3">
+              <label>Número Ganador Correcto</label>
+
+              <input type="text" class="form-control" placeholder="Ej: 5124" />
+            </div>
+
+            <div class="mb-3">
+              <label>Motivo de Corrección</label>
+
+              <textarea class="form-control" rows="4"></textarea>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">
+              Cancelar
+            </button>
+
+            <button class="btn btn-primary">Guardar Corrección</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="aprobarModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header bg-warning">
+            <h5 class="modal-title">⚠️ Confirmación de Resultado</h5>
+          </div>
+
+          <div class="modal-body">
+            <div class="alert alert-danger">
+              Esta acción declarará oficialmente el ganador de la rifa y
+              activará las notificaciones.
+            </div>
+
+            <p>
+              Resultado detectado:
+              <strong>4587</strong>
+            </p>
+
+            <p>
+              Rifa:
+              <strong>Mazda CX-30</strong>
+            </p>
+
+            <div class="form-check mt-3">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="confirmarResultado"
+              />
+
+              <label class="form-check-label" for="confirmarResultado">
+                Confirmo que verifiqué el resultado oficial y autorizo publicar
+                este ganador.
+              </label>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">
+              Cancelar
+            </button>
+
+            <a href="admin-resultado-sorteo.html" class="btn btn-success">
+              Confirmar Ganador
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

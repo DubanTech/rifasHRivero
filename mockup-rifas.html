@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RifaMax – Plataforma de Rifas</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --gold: #F5A623;
+      --gold-light: #FFD580;
+      --dark: #0D0D1A;
+      --dark2: #161628;
+      --dark3: #1E1E35;
+      --accent: #7B5EA7;
+      --accent2: #5E3FA3;
+      --success-green: #27AE60;
+      --danger-red: #E74C3C;
+      --yellow-reserved: #F39C12;
+      --text-muted-custom: #8888AA;
+      --card-border: rgba(123,94,167,0.25);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--dark); color: #EEE; font-family: 'DM Sans', sans-serif; overflow-x: hidden; }
+    h1,h2,h3,h4,h5,h6 { font-family: 'Syne', sans-serif; }
+
+    /* ===== SIDEBAR NAV ===== */
+    #sidebar {
+      position: fixed; top: 0; left: 0; height: 100vh; width: 230px;
+      background: var(--dark2); border-right: 1px solid var(--card-border);
+      display: flex; flex-direction: column; z-index: 1000; overflow-y: auto;
+      transition: transform .3s ease;
+    }
+    .sidebar-logo {
+      padding: 22px 20px 16px; border-bottom: 1px solid var(--card-border);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .logo-icon { width: 38px; height: 38px; background: var(--gold); border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; font-size: 20px; }
+    .logo-text { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.2rem; color: #fff; }
+    .logo-text span { color: var(--gold); }
+
+    .nav-section { padding: 10px 12px 4px; font-size: .7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .1em; color: var(--text-muted-custom); }
+    .nav-link-item {
+      display: flex; align-items: center; gap: 10px; padding: 9px 18px; border-radius: 8px;
+      margin: 2px 8px; color: #AAA; font-size: .88rem; cursor: pointer; transition: all .2s;
+      text-decoration: none;
+    }
+    .nav-link-item:hover, .nav-link-item.active {
+      background: rgba(123,94,167,.22); color: #fff;
+    }
+    .nav-link-item.active { color: var(--gold); }
+    .nav-link-item i { font-size: 1rem; width: 18px; text-align: center; }
+    .badge-nav { margin-left: auto; background: var(--gold); color: #000; border-radius: 30px;
+      font-size: .65rem; padding: 2px 7px; font-weight: 700; }
+
+    /* ===== MAIN CONTENT ===== */
+    #main { margin-left: 230px; min-height: 100vh; transition: margin .3s; }
+
+    /* ===== TOP BAR ===== */
+    .topbar {
+      position: sticky; top: 0; z-index: 500;
+      background: rgba(13,13,26,.9); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--card-border);
+      padding: 12px 28px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .topbar-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.1rem; }
+    .topbar-right { display: flex; align-items: center; gap: 14px; }
+    .avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg,var(--accent),var(--gold));
+      display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .85rem; cursor: pointer; }
+
+    /* ===== PAGE SECTIONS ===== */
+    .page { display: none; padding: 28px; animation: fadeIn .35s ease; }
+    .page.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ===== CARDS ===== */
+    .card-dark {
+      background: var(--dark2); border: 1px solid var(--card-border);
+      border-radius: 14px; overflow: hidden;
+    }
+    .card-dark .card-body { padding: 20px; }
+
+    /* ===== KPI CARDS ===== */
+    .kpi-card {
+      background: var(--dark2); border: 1px solid var(--card-border);
+      border-radius: 14px; padding: 20px; position: relative; overflow: hidden;
+    }
+    .kpi-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    }
+    .kpi-gold::before { background: var(--gold); }
+    .kpi-purple::before { background: var(--accent); }
+    .kpi-green::before { background: var(--success-green); }
+    .kpi-red::before { background: var(--danger-red); }
+    .kpi-label { font-size: .78rem; color: var(--text-muted-custom); text-transform: uppercase; letter-spacing: .07em; }
+    .kpi-value { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; margin: 4px 0; }
+    .kpi-sub { font-size: .78rem; color: var(--text-muted-custom); }
+    .kpi-icon { position: absolute; right: 18px; top: 18px; font-size: 1.6rem; opacity: .15; }
+
+    /* ===== HERO BANNER ===== */
+    .hero-banner {
+      background: linear-gradient(135deg, var(--accent2) 0%, var(--dark2) 60%, var(--dark) 100%);
+      border-radius: 18px; padding: 44px 40px; position: relative; overflow: hidden; margin-bottom: 28px;
+    }
+    .hero-banner::after {
+      content: '🏆'; position: absolute; right: 40px; top: 50%; transform: translateY(-50%);
+      font-size: 7rem; opacity: .12;
+    }
+    .hero-badge { background: var(--gold); color: #000; font-size: .72rem; font-weight: 700;
+      padding: 4px 12px; border-radius: 30px; display: inline-block; margin-bottom: 12px; letter-spacing: .06em; }
+    .hero-banner h1 { font-size: 2.2rem; font-weight: 800; line-height: 1.1; margin-bottom: 10px; }
+    .hero-banner p { color: #AAA; margin-bottom: 20px; max-width: 420px; }
+    .btn-gold { background: var(--gold); color: #000; font-weight: 700; border: none;
+      padding: 10px 24px; border-radius: 8px; font-size: .9rem; cursor: pointer; transition: all .2s; }
+    .btn-gold:hover { background: var(--gold-light); transform: translateY(-1px); }
+    .countdown-mini { display: inline-flex; gap: 10px; margin-top: 14px; }
+    .count-box { background: rgba(255,255,255,.08); border-radius: 8px; padding: 8px 12px; text-align: center; }
+    .count-num { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; color: var(--gold); display: block; }
+    .count-label { font-size: .6rem; color: #888; text-transform: uppercase; }
+
+    /* ===== RAFFLE CARD ===== */
+    .raffle-card {
+      background: var(--dark2); border: 1px solid var(--card-border);
+      border-radius: 14px; overflow: hidden; transition: transform .2s, box-shadow .2s; cursor: pointer;
+    }
+    .raffle-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(123,94,167,.2); }
+    .raffle-img {
+      height: 160px; background: linear-gradient(135deg,#2a1f4a,#1a1240);
+      display: flex; align-items: center; justify-content: center; font-size: 3.5rem; position: relative;
+    }
+    .raffle-status {
+      position: absolute; top: 10px; right: 10px;
+      background: var(--success-green); color: #fff; font-size: .65rem; font-weight: 700;
+      padding: 3px 9px; border-radius: 30px; text-transform: uppercase;
+    }
+    .raffle-body { padding: 16px; }
+    .raffle-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
+    .raffle-price { color: var(--gold); font-weight: 700; font-size: .95rem; margin-bottom: 10px; }
+    .progress-tickets { margin-bottom: 10px; }
+    .progress-bar-custom { background: rgba(255,255,255,.08); border-radius: 30px; height: 6px; }
+    .progress-fill { background: linear-gradient(90deg, var(--accent), var(--gold)); border-radius: 30px; height: 6px; }
+    .ticket-stats { display: flex; justify-content: space-between; font-size: .75rem; color: var(--text-muted-custom); margin-bottom: 12px; }
+    .raffle-date { font-size: .75rem; color: var(--text-muted-custom); margin-bottom: 12px; }
+    .raffle-date i { color: var(--gold); }
+
+    /* ===== TICKET GRID ===== */
+    .ticket-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; }
+    .ticket {
+      aspect-ratio: 1; border-radius: 5px; display: flex; align-items: center; justify-content: center;
+      font-size: .65rem; font-weight: 700; cursor: pointer; transition: all .15s;
+    }
+    .ticket.available { background: rgba(39,174,96,.18); color: var(--success-green); border: 1px solid rgba(39,174,96,.3); }
+    .ticket.reserved { background: rgba(243,156,18,.18); color: var(--yellow-reserved); border: 1px solid rgba(243,156,18,.3); }
+    .ticket.paid { background: rgba(231,76,60,.18); color: var(--danger-red); border: 1px solid rgba(231,76,60,.3); }
+    .ticket.winner { background: var(--gold); color: #000; border: 1px solid var(--gold-light); }
+    .ticket.selected { background: var(--accent); color: #fff; border: 1px solid var(--accent2); transform: scale(1.08); }
+    .ticket.available:hover { background: rgba(39,174,96,.35); transform: scale(1.08); }
+
+    /* ===== LEGEND ===== */
+    .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: .75rem; }
+    .legend-item { display: flex; align-items: center; gap: 6px; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 3px; }
+
+    /* ===== TABLE ===== */
+    .table-dark-custom { width: 100%; }
+    .table-dark-custom th { background: var(--dark3); color: var(--text-muted-custom); font-size: .75rem;
+      font-weight: 600; text-transform: uppercase; letter-spacing: .06em; padding: 12px 14px; border: none; }
+    .table-dark-custom td { padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,.05); font-size: .87rem; vertical-align: middle; }
+    .table-dark-custom tr:last-child td { border-bottom: none; }
+    .table-dark-custom tr:hover td { background: rgba(255,255,255,.03); }
+
+    /* ===== BADGE STATUS ===== */
+    .badge-status { padding: 4px 10px; border-radius: 30px; font-size: .7rem; font-weight: 700; }
+    .badge-active { background: rgba(39,174,96,.18); color: var(--success-green); }
+    .badge-reserved { background: rgba(243,156,18,.18); color: var(--yellow-reserved); }
+    .badge-paid { background: rgba(123,94,167,.25); color: #c8a8ff; }
+    .badge-pending { background: rgba(231,76,60,.18); color: var(--danger-red); }
+    .badge-approved { background: rgba(39,174,96,.18); color: var(--success-green); }
+    .badge-winner { background: rgba(245,166,35,.2); color: var(--gold); }
+
+    /* ===== FORM ===== */
+    .form-label-custom { font-size: .82rem; color: var(--text-muted-custom); margin-bottom: 5px; font-weight: 500; }
+    .form-control-custom {
+      background: var(--dark3); border: 1px solid var(--card-border); color: #eee;
+      border-radius: 8px; padding: 10px 14px; width: 100%; font-size: .88rem; outline: none;
+      transition: border-color .2s;
+    }
+    .form-control-custom:focus { border-color: var(--accent); }
+    .form-control-custom::placeholder { color: #555; }
+
+    /* ===== CHECKOUT TIMER ===== */
+    .timer-box {
+      background: rgba(231,76,60,.12); border: 1px solid rgba(231,76,60,.3);
+      border-radius: 10px; padding: 14px 20px; text-align: center;
+    }
+    .timer-value { font-family: 'Syne', sans-serif; font-size: 2.2rem; font-weight: 800; color: var(--danger-red); }
+
+    /* ===== SECTION HEADER ===== */
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .section-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.15rem; }
+    .section-title span { color: var(--gold); }
+
+    /* ===== SIDEBAR TOGGLE (mobile hint) ===== */
+    .nav-divider { height: 1px; background: var(--card-border); margin: 8px 16px; }
+
+    /* ===== WINNERS STRIP ===== */
+    .winner-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.05); }
+    .winner-avatar { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg,var(--accent),var(--gold));
+      display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: .85rem; flex-shrink: 0; }
+    .winner-num { background: var(--gold); color: #000; border-radius: 6px; padding: 2px 8px; font-weight: 800; font-size: .8rem; }
+
+    /* ===== PROFILE ===== */
+    .profile-avatar-lg { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg,var(--accent),var(--gold));
+      display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800; margin-bottom: 12px; }
+
+    /* ===== ADMIN SIDEBAR SECTION ===== */
+    .admin-badge { background: var(--accent2); color: #fff; font-size: .6rem; padding: 2px 7px; border-radius: 4px; font-weight: 700; }
+
+    /* ===== CHART PLACEHOLDER ===== */
+    .chart-placeholder {
+      background: var(--dark3); border-radius: 10px; height: 180px;
+      display: flex; align-items: flex-end; justify-content: space-around; padding: 12px;
+    }
+    .chart-bar { border-radius: 4px 4px 0 0; width: 32px; transition: height .5s; }
+
+    /* ===== SUCCESS PAGE ===== */
+    .success-icon { font-size: 4rem; color: var(--success-green); }
+    .ticket-chip { display: inline-block; background: rgba(123,94,167,.2); border: 1px solid var(--accent);
+      color: #c8a8ff; border-radius: 8px; padding: 5px 12px; font-weight: 700; font-size: .85rem; margin: 3px; }
+
+    /* ===== SEARCH BAR ===== */
+    .search-bar { position: relative; }
+    .search-bar input { background: var(--dark2); border: 1px solid var(--card-border); color: #eee;
+      border-radius: 8px; padding: 9px 14px 9px 38px; width: 100%; font-size: .88rem; outline: none; }
+    .search-bar input:focus { border-color: var(--accent); }
+    .search-bar i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #555; }
+
+    /* ===== PAGE INDICATOR ===== */
+    .page-indicator {
+      position: fixed; bottom: 20px; right: 20px;
+      background: var(--dark2); border: 1px solid var(--card-border);
+      border-radius: 30px; padding: 8px 16px; font-size: .75rem; color: var(--text-muted-custom);
+      z-index: 2000; display: flex; align-items: center; gap: 8px;
+    }
+    .page-indicator .curr-page { color: var(--gold); font-weight: 700; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      #sidebar { transform: translateX(-100%); }
+      #sidebar.open { transform: translateX(0); }
+      #main { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== SIDEBAR ===== -->
+<nav id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">🎟️</div>
+    <div class="logo-text">Rifa<span>Max</span></div>
+  </div>
+
+  <!-- PUBLIC -->
+  <div class="nav-section">Público</div>
+  <a class="nav-link-item active" onclick="showPage('home', this)"><i class="bi bi-house-fill"></i> Inicio</a>
+  <a class="nav-link-item" onclick="showPage('raffles', this)"><i class="bi bi-grid-fill"></i> Rifas</a>
+  <a class="nav-link-item" onclick="showPage('raffle-detail', this)"><i class="bi bi-ticket-fill"></i> Detalle Rifa</a>
+  <a class="nav-link-item" onclick="showPage('results', this)"><i class="bi bi-trophy-fill"></i> Resultados</a>
+  <a class="nav-link-item" onclick="showPage('login', this)"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+  <a class="nav-link-item" onclick="showPage('register', this)"><i class="bi bi-person-plus-fill"></i> Registro</a>
+
+  <div class="nav-divider"></div>
+  <!-- USER -->
+  <div class="nav-section">Mi Cuenta</div>
+  <a class="nav-link-item" onclick="showPage('checkout', this)"><i class="bi bi-cart-fill"></i> Checkout</a>
+  <a class="nav-link-item" onclick="showPage('payment-success', this)"><i class="bi bi-check-circle-fill"></i> Pago Exitoso</a>
+  <a class="nav-link-item" onclick="showPage('payment-failed', this)"><i class="bi bi-x-circle-fill"></i> Pago Rechazado</a>
+  <a class="nav-link-item" onclick="showPage('my-tickets', this)"><i class="bi bi-ticket-perforated-fill"></i> Mis Boletas</a>
+  <a class="nav-link-item" onclick="showPage('profile', this)"><i class="bi bi-person-circle"></i> Perfil</a>
+
+  <div class="nav-divider"></div>
+  <!-- ADMIN -->
+  <div class="nav-section">Panel Admin <span class="admin-badge">Admin</span></div>
+  <a class="nav-link-item" onclick="showPage('admin-dashboard', this)"><i class="bi bi-speedometer2"></i> Dashboard</a>
+  <a class="nav-link-item" onclick="showPage('admin-raffles', this)"><i class="bi bi-collection-fill"></i> Rifas</a>
+  <a class="nav-link-item" onclick="showPage('admin-tickets', this)"><i class="bi bi-grid-3x3-gap-fill"></i> Boletas</a>
+  <a class="nav-link-item" onclick="showPage('admin-payments', this)"><i class="bi bi-credit-card-fill"></i> Pagos <span class="badge-nav">3</span></a>
+  <a class="nav-link-item" onclick="showPage('admin-users', this)"><i class="bi bi-people-fill"></i> Usuarios</a>
+  <a class="nav-link-item" onclick="showPage('admin-draws', this)"><i class="bi bi-dice-6-fill"></i> Sorteos</a>
+  <a class="nav-link-item" onclick="showPage('admin-logs', this)"><i class="bi bi-journal-text"></i> Logs</a>
+  <a class="nav-link-item" onclick="showPage('admin-settings', this)"><i class="bi bi-gear-fill"></i> Configuración</a>
+</nav>
+
+<!-- ===== MAIN ===== -->
+<div id="main">
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-title" id="topbarTitle">🏠 Inicio</div>
+    <div class="topbar-right">
+      <button class="btn btn-sm" style="background:rgba(255,255,255,.07);color:#ccc;border:none;border-radius:8px;" onclick="showPage('admin-dashboard', document.querySelector('.nav-link-item'))">
+        <i class="bi bi-shield-fill"></i> Admin
+      </button>
+      <div class="avatar">JD</div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- PAGE: HOME -->
+  <!-- ============================================================ -->
+  <div class="page active" id="page-home">
+    <!-- HERO -->
+    <div class="hero-banner">
+      <div class="hero-badge">🔥 SORTEO ESPECIAL ACTIVO</div>
+      <h1>Gana premios<br/>increíbles hoy</h1>
+      <p>Participa en nuestras rifas con total transparencia. Sorteos verificados con resultados de la lotería oficial.</p>
+      <button class="btn-gold" onclick="showPage('raffles', document.querySelectorAll('.nav-link-item')[1])">Ver todas las rifas →</button>
+      <div class="countdown-mini">
+        <div class="count-box"><span class="count-num" id="cnt-h">02</span><span class="count-label">Horas</span></div>
+        <div class="count-box"><span class="count-num" id="cnt-m">34</span><span class="count-label">Min</span></div>
+        <div class="count-box"><span class="count-num" id="cnt-s">17</span><span class="count-label">Seg</span></div>
+      </div>
+    </div>
+
+    <div class="row g-3">
+      <!-- Rifas destacadas -->
+      <div class="col-12">
+        <div class="section-header">
+          <div class="section-title">Rifas <span>Destacadas</span></div>
+          <a onclick="showPage('raffles', document.querySelectorAll('.nav-link-item')[1])" style="color:var(--gold);font-size:.85rem;cursor:pointer;">Ver todas →</a>
+        </div>
+      </div>
+      <!-- Cards -->
+      <div class="col-md-4">
+        <div class="raffle-card" onclick="showPage('raffle-detail', document.querySelectorAll('.nav-link-item')[2])">
+          <div class="raffle-img">🚗<span class="raffle-status">Activa</span></div>
+          <div class="raffle-body">
+            <div class="raffle-name">Toyota Corolla 2024</div>
+            <div class="raffle-price">$20.000 / boleta</div>
+            <div class="raffle-date"><i class="bi bi-calendar3"></i> Sorteo: 15 Jun 2025</div>
+            <div class="progress-tickets">
+              <div class="ticket-stats"><span>650 vendidas</span><span>350 disponibles</span></div>
+              <div class="progress-bar-custom"><div class="progress-fill" style="width:65%"></div></div>
+            </div>
+            <button class="btn-gold w-100">Participar</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="raffle-card" onclick="showPage('raffle-detail', document.querySelectorAll('.nav-link-item')[2])">
+          <div class="raffle-img">📱<span class="raffle-status">Activa</span></div>
+          <div class="raffle-body">
+            <div class="raffle-name">iPhone 16 Pro Max</div>
+            <div class="raffle-price">$5.000 / boleta</div>
+            <div class="raffle-date"><i class="bi bi-calendar3"></i> Sorteo: 22 Jun 2025</div>
+            <div class="progress-tickets">
+              <div class="ticket-stats"><span>420 vendidas</span><span>80 disponibles</span></div>
+              <div class="progress-bar-custom"><div class="progress-fill" style="width:84%"></div></div>
+            </div>
+            <button class="btn-gold w-100">Participar</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="raffle-card" onclick="showPage('raffle-detail', document.querySelectorAll('.nav-link-item')[2])">
+          <div class="raffle-img">🏠<span class="raffle-status">Activa</span></div>
+          <div class="raffle-body">
+            <div class="raffle-name">Apartamento Barranquilla</div>
+            <div class="raffle-price">$50.000 / boleta</div>
+            <div class="raffle-date"><i class="bi bi-calendar3"></i> Sorteo: 30 Jun 2025</div>
+            <div class="progress-tickets">
+              <div class="ticket-stats"><span>1200 vendidas</span><span>800 disponibles</span></div>
+              <div class="progress-bar-custom"><div class="progress-fill" style="width:60%"></div></div>
+            </div>
+            <button class="btn-gold w-100">Participar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Últimos ganadores -->
+      <div class="col-md-5">
+        <div class="card-dark">
+          <div class="card-body">
+            <div class="section-title mb-3">Últimos <span>Ganadores</span></div>
+            <div class="winner-item">
+              <div class="winner-avatar">LG</div>
+              <div>
+                <div style="font-weight:600;font-size:.88rem;">Luis García</div>
+                <div style="font-size:.75rem;color:var(--text-muted-custom);">iPhone 15 Pro – Boleta <span class="winner-num">0423</span></div>
+              </div>
+              <div style="margin-left:auto;font-size:.73rem;color:#555;">Hace 2 días</div>
+            </div>
+            <div class="winner-item">
+              <div class="winner-avatar">MR</div>
+              <div>
+                <div style="font-weight:600;font-size:.88rem;">María Rodríguez</div>
+                <div style="font-size:.75rem;color:var(--text-muted-custom);">Toyota RAV4 – Boleta <span class="winner-num">0017</span></div>
+              </div>
+              <div style="margin-left:auto;font-size:.73rem;color:#555;">Hace 1 sem</div>
+            </div>
+            <div class="winner-item" style="border:none;">
+              <div class="winner-avatar">CP</div>
+              <div>
+                <div style="font-weight:600;font-size:.88rem;">Carlos Pérez</div>
+                <div style="font-size:.75rem;color:var(--text-muted-custom);">Moto Yamaha – Boleta <span class="winner-num">0891</span></div>
+              </div>
+              <div style="margin-left:auto;font-size:.73rem;color:#555;">Hace 2 sem</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Redes / footer info -->
+      <div class="col-md-7">
+        <div class="card-dark h-100">
+          <div class="card-body">
+            <div class="section-title mb-3">¿Cómo <span>funciona</span>?</div>
+            <div class="row g-3">
+              <div class="col-6">
+                <div style="background:var(--dark3);border-radius:10px;padding:14px;text-align:center;">
+                  <div style="font-size:1.8rem;margin-bottom:6px;">🎟️</div>
+                  <div style="font-weight:600;font-size:.85rem;">1. Elige boletas</div>
+                  <div style="font-size:.75rem;color:#777;margin-top:4px;">Selecciona tus números favoritos</div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div style="background:var(--dark3);border-radius:10px;padding:14px;text-align:center;">
+                  <div style="font-size:1.8rem;margin-bottom:6px;">💳</div>
+                  <div style="font-weight:600;font-size:.85rem;">2. Paga con Wompi</div>
+                  <div style="font-size:.75rem;color:#777;margin-top:4px;">Pago 100% seguro</div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div style="background:var(--dark3);border-radius:10px;padding:14px;text-align:center;">
+                  <div style="font-size:1.8rem;margin-bottom:6px;">📺</div>
+                  <div style="font-weight:600;font-size:.85rem;">3. Sigue el sorteo</div>
+                  <div style="font-size:.75rem;color:#777;margin-top:4px;">Transmisión en vivo</div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div style="background:var(--dark3);border-radius:10px;padding:14px;text-align:center;">
+                  <div style="font-size:1.8rem;margin-bottom:6px;">🏆</div>
+                  <div style="font-weight:600;font-size:.85rem;">4. ¡Gana!</div>
+                  <div style="font-size:.75rem;color:#777;margin-top:4px;">Resultado verificado</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- PAGE: LISTADO RIFAS -->
+  <!-- ============================================================ -->
+  <div class="page" id="page-raffles">
+    <div class="section-header mb-3">
+      <div class="section-title">Todas las <span>Rifas</span></div>
+      <span style="color:var(--text-muted-custom);font-size:.85rem;">14 rifas activas</span>
+    </div>
+    <!-- Buscador + Filtros -->
+    <div class="row g-2 mb-4">
+      <div class="col-md-5">
+        <div class="search-bar">
+          <i class="bi bi-search"></i>
+          <input type="text" placeholder="Buscar rifas..."/>
+        </div>
+      </div>
+      <div class="col-md-7 d-flex gap-2">
+        <select class="form-control-custom" style="flex:1;"><option>Todos los precios</option><option>$5.000 - $20.000</option><option>$20.000 - $50.000</option></select>
+        <select class="form-control-custom" style="flex:1;"><option>Todas las categorías</option><option>Vehículos</option><option>Tecnología</option><option>Inmuebles</option></select>
+        <select class="form-control-custom" style="flex:1;"><option>Ordenar por</option><option>Precio ↑</option><option>Más vendidas</option><option>Fecha sorteo</option></select>
+      </div>
+    </div>
+    <div class="row g-3">
+      <div class="col-md-4"><div class="raffle-card" onclick="showPage('raffle-detail', document.querySelectorAll('.nav-link-item')[2])"><div class="raffle-img">🚗<span class="raffle-status">Activa</span></div><div class="raffle-body"><div class="raffle-name">Toyota Corolla 2024</div><div class="raffle-price">$20.000 / boleta</div><div class="raffle-date"><i class="bi bi-calendar3"></i> 15 Jun 2025</div><div class="progress-tickets"><div class="ticket-stats"><span>650 vendidas</span><span>350 disp.</span></div><div class="progress-bar-custom"><div class="progress-fill" style="width:65%"></div></div></div><button class="btn-gold w-100">Participar</button></div></div></div>
+      <div class="col-md-4"><div class="raffle-card" onclick="showPage('raffle-detail', document.querySelectorAll('.nav-link-item')[2])"><div class="raffle-img">📱<span class="raffle-status">Activa</span></div><div class="raffle-body"><div class="raffle-name">iPhone 16 Pro Max</div><div class="raffle-price">$5.000 / boleta</div><div class="raffle-date"><i class="bi bi-calendar3"></i> 22 Jun 2025</div><div class="progress-tickets"><div class="ticket-stats"><span>420 vendidas</span><span>80 disp.</span></div><div class="progress-bar-custom"><div class="progress-fill" style="width:84%"></div></div></div><button class="btn-gold w-100">Participar</button></div></div></div>
+      <div class="col-md-4"><div class="raffle-card" onclick="showPage('raffle-detail', document.querySelectorAll('.nav-link-item')[2])"><div class="raffle-img">🏠<span class="raffle-status">Activa</span></div><div class="raffle-body"><div class="raffle-name">Apartamento Barranquilla</div><div class="raffle-price">$50.000 / boleta</div><div class="raffle-date"><i class="bi bi-calendar3"></i> 30 Jun 2025</div><div class="progress-tickets"><div class="ticket-stats"><span>1200 vendidas</span><span>800 disp.</span></div><div class="progress-bar-custom"><div class="progress-fill" style="width:60%"></div></div></div><button class="btn-gold w-100">Participar</button></div></div></div>
+      <div class="col-md-4"><div class="raffle-card"><div class="raffle-img">🏍️<span class="raffle-status">Activa</span></div><div class="raffle-body"><div class="raffle-name">Moto Yamaha MT-07</div><div class="raffle-price">$15.000 / boleta</div><div class="raffle-date"><i class="bi bi-calendar3"></i> 8 Jul 2025</div><div class="progress-tickets"><div class="ticket-stats"><span>300 vendidas</span><span>200 disp.</span></div><div class="progress-bar-custom"><div class="progress-fill" style="width:60%"></div></div></div><button class="btn-gold w-100">Participar</button></div></div></div>
+      <div class="col-md-4"><div class="raffle-card"><div class="raffle-img">💻<span class="raffle-status">Activa</span></div><div class="raffle-body"><div class="raffle-name">MacBook Pro M3</div><div class="raffle-price">$10.000 / boleta</div><div class="raffle-date"><i class="bi bi-calendar3"></i> 12 Jul 2025</div><div class="progress-tickets"><div class="ticket-stats"><span>180 vendidas</span><span>320 disp.</span></div><div class="progress-bar-custom"><div class="progress-fill" style="width:36%"></div></div></div><button class="btn-gold w-100">Participar</button></div></div></div>
+      <div class="col-md-4"><div class="raffle-card"><div class="raffle-img">✈️<span class="raffle-status">Activa</span></div><div class="raffle-body"><div class="raffle-name">Viaje a Europa x2</div><div class="raffle-price">$8.000 / boleta</div><div class="raffle-date"><i class="bi bi-calendar3"></i> 20 Jul 2025</div><div class="progress-tickets"><div class="ticket-stats"><span>90 vendidas</span><span>410 disp.</span></div><div class="progress-bar-custom"><div class="progress-fill" style="width:18%"></div></div></div><button class="btn-gold w-100">Participar</button></div></div></div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- PAGE: DETALLE RIFA -->
+  <!-- ============================================================ -->
+  <div class="page" id="page-raffle-detail">
+    <div class="row g-3">
+      <!-- Info izquierda -->
+      <div class="col-md-5">
+        <div class="card-dark mb-3">
+          <div style="height:200px;background:linear-gradient(135deg,#2a1f4a,#1a1240);display:flex;align-items:center;justify-content:center;font-size:6rem;">🚗</div>
+          <div class="card-body">
+            <h2 style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;margin-bottom:6px;">Toyota Corolla 2024</h2>
+            <p style="color:var(--text-muted-custom);font-size:.85rem;margin-bottom:14px;">Vehículo 0 km completamente equipado, color blanco perla, con todos los papeles al día. Entrega inmediata al ganador.</p>
+            <div class="row g-2 mb-3">
+              <div class="col-4"><div style="background:var(--dark3);border-radius:8px;padding:10px;text-align:center;"><div style="color:var(--success-green);font-weight:800;font-size:1.1rem;">650</div><div style="font-size:.7rem;color:#666;">Vendidas</div></div></div>
+              <div class="col-4"><div style="background:var(--dark3);border-radius:8px;padding:10px;text-align:center;"><div style="color:var(--yellow-reserved);font-weight:800;font-size:1.1rem;">48</div><div style="font-size:.7rem;color:#666;">Reservadas</div></div></div>
+              <div class="col-4"><div style="background:var(--dark3);border-radius:8px;padding:10px;text-align:center;"><div style="color:#888;font-weight:800;font-size:1.1rem;">302</div><div style="font-size:.7rem;color:#666;">Disponibles</div></div></div>
+            </div>
+            <div style="background:var(--dark3);border-radius:8px;padding:12px;margin-bottom:14px;">
+              <div style="font-size:.78rem;color:#666;margin-bottom:2px;"><i class="bi bi-calendar3" style="color:var(--gold);"></i> Fecha del sorteo</div>
+              <div style="font-weight:700;">15 de Junio, 2025 – 8:00 PM</div>
+              <div style="font-size:.75rem;color:#666;margin-top:4px;">Lotería Baloto – resultado verificado automáticamente</div>
+            </div>
+            <div style="font-size:1.3rem;font-weight:800;color:var(--gold);margin-bottom:14px;">$20.000 <span style="font-size:.8rem;color:#666;font-weight:400;">por boleta</span></div>
+            <div class="d-flex gap-2">
+              <button class="btn-gold flex-fill" onclick="showPage('checkout', document.querySelectorAll('.nav-link-item')[9])">Comprar Selección</button>
+              <button style="background:rgba(255,255,255,.07);border:1px solid var(--card-border);color:#ccc;border-radius:8px;padding:10px 14px;cursor:pointer;" title="Ver transmisión"><i class="bi bi-play-circle-fill"></i> En vivo</button>
+              <button style="background:rgba(255,255,255,.07);border:1px solid var(--card-border);color:#ccc;border-radius:8px;padding:10px 14px;cursor:pointer;" title="Reglamento"><i class="bi bi-file-text"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid de boletas -->
+      <div class="col-md-7">
+        <div class="card-dark">
+          <div class="card-body">
+            <div class="section-header mb-3">
+              <div class="section-title">Selecciona tus <span>Boletas</span></div>
+              <div style="font-size:.8rem;color:var(--gold);" id="selected-count">0 seleccionadas</div>
+            </div>
+            <div class="legend mb-3">
+              <div class="legend-item"><div class="legend-dot" style="background:rgba(39,174,96,.4);border:1px solid var(--success-green);"></div><span style="color:#aaa;">Disponible</span></div>
+              <div class="legend-item"><div class="legend-dot" style="background:rgba(243,156,18,.4);border:1px solid var(--yellow-reserved);"></div><span style="color:#aaa;">Reservada</span></div>
+              <div class="legend-item"><div class="legend-dot" style="background:rgba(231,76,60,.4);border:1px solid var(--danger-red);"></div><span style="color:#aaa;">Pagada</span></div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--accent);border:1px solid var(--accent2);"></div><span style="color:#aaa;">Tu selección</span></div>
+            </div>
+            <div class="ticket-grid" id="ticketGrid"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- PAGE: LOGIN -->
+  <!-- ============================================================ -->
+  <div class="page" id="page-login">
+    <div class="row justify-content-center">
+      <div class="col-md-5">
+        <div class="card-dark">
+          <div class="card-body p-4">
+            <div class="text-center mb-4">
+              <div style="font-size:2.5rem;">🎟️</div>
+              <h2 style="font-family:'Syne',sans-serif;font-weight:800;">Bienvenido a <span style="color:var(--gold);">RifaMax</span></h2>
+              <p style="color:#666;font-size:.85rem;">Inicia sesión para participar</p>
+            </div>
+            <div class="mb-3"><div class="form-label-custom">Correo electrónico</div><input class="form-control-custom" type="email" placeholder="tu@correo.com"/></div>
+            <div class="mb-3"><div class="form-label-custom">Contraseña</div><input class="form-control-custom" type="password" placeholder="••••••••"/></div>
+            <button class="btn-gold w-100 mb-3" style="padding:12px;">Ingresar</button>
+            <div class="text-center" style="font-size:.83rem;color:#666;">
+              <a style="color:var(--gold);cursor:pointer;" onclick="showPage('register', document.querySelectorAll('.nav-link-item')[5])">Recuperar contraseña</a>
+              &nbsp;·&nbsp;
+              <a style="color:var(--gold);cursor:pointer;" onclick="showPage('register', document.querySelectorAll('.nav-link-item')[5])">Crear cuenta</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- PAGE: REGISTRO -->
+  <!-- ============================================================ -->
+  <div class="page" id="page-register">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card-dark">
+          <div class="card-body p-4">
+            <h2 style="font-family:'Syne',sans-serif;font-weight:800;margin-bottom:4px;">Crear <span style="color:var(--gold);">Cuenta</span></h2>
+            <p style="color:#666;font-size:.85rem;margin-bottom:24px;">Completa tus datos para registrarte</p>
+            <div class="row g-3">
+              <div class="col-6"><div class="form-label-custom">Nombre</div><input class="form-control-custom" placeholder="Juan"/></div>
+              <div class="col-6"><div class="form-label-custom">Apellido</div><input class="form-control-custom" placeholder="García"/></div>
+              <div class="col-6"><div class="form-label-custom">Documento</div><input class="form-control-custom" placeholder="123456789"/></div>
+              <div class="col-6"><div class="form-label-custom">Teléfono</div><input class="form-control-custom" placeholder="+57 300 000 0000"/></div>
+              <div class="col-12"><div class="form-label-custom">Correo electrónico</div><input class="form-control-custom" type="email" placeholder="tu@correo.com"/></div>
+              <div class="col-6"><div class="form-label-custom">Contraseña</div><input class="form-control-custom" type="password" placeholder="••••••••"/></div>
+              <div class="col-6"><div class="form-label-custom">Confirmar contraseña</div><input class="form-control-custom" type="password" placeholder="••••••••"/></div>
+            </div>
+            <button class="btn-gold w-100 mt-4" style="padding:12px;">Registrarme</button>
+            <div class="text-center mt-3" style="font-size:.83rem;color:#666;">¿Ya tienes cuenta? <a style="color:var(--gold);cursor:pointer;" onclick="showPage('login', document.querySelectorAll('.nav-link-item')[4])">Inicia sesión</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- PAGE: CHECKOUT -->
+  <!-- ============================================================ -->
+  <div class="page" id="page-checkout">
+    <div class="row justify-content-center">
+      <div class="col-md-7">
+        <div class="section-title mb-4">Resumen de <span style="color:var(--gold);">Compra</span></div>
+        <div class="card-dark mb-3">
+          <div class="card-body">
+            <div style="font-weight:700;margin-bottom:12px;">🚗 Toyota Corolla 2024</div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:.88rem;"><span style="color:#777;">Boletas seleccionadas</span><span><span class="ticket-chip">0042</span><span class="ticket-chip">0157</span><span class="ticket-chip">0389</span></span></div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:.88rem;"><span style="color:#777;">Cantidad</span><span style="font-weight:700;">3 boletas</span></div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:.88rem;"><span style="color:#777;">Precio unitario</span><span>$20.000</span></div>
+            <div style="height:1px;background:rgba(255,255,255,.07);margin:12px 0;"></div>
+            <div style="display:flex;justify-content:space-between;font-weight:800;font-size:1.1rem;"><span>Total</span><span style="color:var(--gold);">$60.000</span></div>
+          </div>
+        </div>
+        <div class="timer-box mb-3">
+          <div style="font-size:.8rem;color:#888;margin-bottom:4px;"><i class="bi bi-clock"></i> Tu reserva expira en:</div>
+          <div class="timer-value" id="checkout-timer">09:47</div>
+          <div style="font-size:.75rem;color:#888;margin-top:4px;">Completa el pago antes de que expire</div>
+        </div>
+        <button class="btn-gold w-100" style="padding:14px;font-size:1rem;" onclick="showPage('payment-success', document.querySelectorAll('.nav-link-item')[10])">
+          <i class="bi bi-credit-card"></i> &nbsp;Pagar con Wompi
+        </button>
+        <div class="text-center mt-2" style="font-size:.75rem;color:#555;"><i class="bi bi-shield-check"></i> Pago 100% seguro con encriptación SSL</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- PAGE: PAGO EXITOSO -->
+  <!-- ============================================================ -->
+  <div class="page" id="page-payment-success">
+    <div class="row justify-content-center">
+      <div class="col-md-6 text-center">
+        <div class="success-icon mb-3">✅</div>
+        <h2 style="font-family:'Syne',sans-serif;font-weight:800;margin-bottom:8px;">¡Pago Exitoso!</h2>
+        <p style="color:#777;margin-bottom:24px;">Ya estás participando en la rifa. ¡Mucha suerte!</p>
+        <div class="card-dark mb-3 text-start">
+          <div class="card-body">
+            <div style="display:flex;justify-content:space-between;margin-bottom:10px;font-size:.88rem;"><span style="color:#777;">Rifa</span><span style="font-weight:700;">Toyota Corolla 2024</span></div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:10px;font-size:.88rem;"><span style="color:#777;">Tus números</span><div><span class="ticket-chip">0042</span><span class="ticket-chip">0157</span><span class="ticket-chip">0389</span></div></div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:10px;font-size:.88rem;"><span style="color:#777;">Cod. transacción</span><span style="font-family:monospace;color:var(--gold);">#WMP-2024-0892</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:.88rem;"><span style="color:#777;">Fecha</span><span>2 Jun 2025, 3:42 PM</span></div>
+          </div>
+        </div>
+        <div style="background:rgba(39,174,96,.1);border:1px solid rgba(39,174,96,.3);border-radius:10px;padding:12px;font-size:.82rem;color:#aaa;margin-bottom:20px;">
+          <i class="bi bi-envelope-check" style="color:var(--success-green);"></i> &nbsp;Confirmación enviada a <strong>juan@correo.com</strong>
+        </div>
+        <button class="btn-gold" onclick="showPage('my-tickets', document.querySelectorAll('.nav-link-item')[12])">Ver mis participaciones →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- PAGE: PAGO RECHAZADO -->
+  <!-- ============================================================ -->
+  <div class="page" id="page-payment-failed">
+    <div class="row justify-content-center">
+      <div class="col-md-6 text-center">
+        <div style="font-size:4rem;margin-bottom:12px;">❌</div>
+        <h2 style="font-family:'Syne',sans-serif;font-weight:800;margin-bottom:8px;color:var(--danger-red);">Pago Rechazado</h2>
+        <p style="color:#777;margin-bottom:20px;">No se pudo procesar tu pago. Tu reserva sigue activa por 5 minutos.</p>
+        <div class="card-dark mb-3 text-start"><div class="card-body">
+          <div style="font-size:.85rem;color:#777;margin-bottom:6px;">Motivo:</div>
+          <div style="color:var(--danger-red);font-weight:700;">Fondos insuficientes en la tarjeta</div>
+        </div></div>
+        <button class="btn-gold" onclick="showPage('checkout', document.querySelectorAll('.nav-link-item')[9])">Reintentar pago</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- PAGE: MIS PARTICIPACIONES -->
+  <!-- ============================================================ -->
+  <div class="page" id="page-my-tickets">
+    <div class="section-title mb-4">Mis <span style="color:var(--gold);">Participaciones</span></div>
+    <div class="card-dark">
+      <div style="overflow-x:auto;">
+        <table class="table-dark-custom">
+          <thead><tr><th>Rifa</th><th>Mis Números</th><th>Cantidad</th><th>Total</th><th>Fecha</th><th>Estado</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Toyota Corolla 2024</strong></td><td><span class="ticket-chip">0042</span><span class="ticket-chip">0157</span></td><td>2</td><td style="color:var(--gold);">$40.000</td><td>2 Jun 2025</td><td><span class="badge-status badge-paid">Pagada</span></td></tr>
+            <tr><td><strong>iPhone 16 Pro Max</strong></td><td><span class="ticket-chip">0423</span></td><td>1</td><td style="color:var(--gold);">$5.000</td><td>30 May 2025</td><td><span class="badge-status badge-winner">Ganadora 🏆</span></td></tr>
+            <tr><td><strong>Moto Yamaha MT-07</strong></td><td><span class="ticket-chip">0017</span><span class="ticket-chip">0033</span></td><td>2</td><td style="color:var(--gold);">$30.000</td><td>15 May 2025</td><td><span class="badge-status badge-pending">Perdedora</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- PAGE: PERFIL -->
+  <!-- ============================================================ -->
+  <div class="page" id="page-profile">
+    <div class="row g-3">
+      <div class="col-md-4">
+        <div class="card-dark">
+          <div class="card-body text-center">
+            <div class="profile-avatar-lg mx-auto">JG</div>
+            <h3 style="font-family:'Syne',sans-serif;font-weight:700;">Juan García</h3>
+            <p style="color:#666;font-size:.85rem;">juan@correo.com</p>
+            <div style="background:var(--dark3);border-radius:8px;padding:12px;text-align:left;margin-top:14px;font-size:.85rem;">
+              <div style="margin-bottom:6px;"><span style="color:#666;">📞</span> +57 300 000 0000</div>
+              <div style="margin-bottom:6px;"><span style="color:#666;">🪪</span> CC 12345678</div>
+              <div><span style="color:#666;">📅</span> Miembro desde Mar 2024</div>
+            </div>
+            <div class="d-flex gap-2 mt-3">
+              <button style="flex:1;background:var(--dark3);border:1px solid var(--card-border);color:#ccc;border-radius:8px;padding:8px;cursor:pointer;font-size:.82rem;">Editar perfil</button>
+              <button style="flex:1;background:var(--dark3);border:1px solid var(--card-border);color:#ccc;border-radius:8px;padding:8px;cursor:pointer;font-size:.82rem;">Cambiar clave</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-8">
+        <div class="row g-3 mb-3">
+          <div class="col-4"><div class="kpi-card kpi-gold"><div class="kpi-label">Total invertido</div><div class="kpi-value" style="font-size:1.4rem;">$275k</div><i class="bi bi-cash-coin kpi-icon"></i></div></div>
+          <div class="col-4"><div class="kpi-card kpi-purple"><div class="kpi-label">Rifas activas</div><div class="kpi-value" style="font-size:1.4rem;">3</div><i class="bi bi-ticket-fill kpi-icon"></i></div></div>
+          <div class="col-4"><div class="kpi-card kpi-green"><div class="kpi-label">Premios ganados</div><div class="kpi-value" style="font-size:1.4rem;">1</div><i class="bi bi-trophy-fill kpi-icon"></i></div></div>
+        </div>
+        <div class="card-dark"><div class="card-body">
+          <div class="section-title mb-3">Historial reciente</div>
+          <div style="font-size:.85rem;color:#666;text-align:center;padding:20px;">Ver en "Mis Participaciones" →</div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- PAGE: RESULTADOS -->
+  <!-- ============================================================ -->
+  <div class="page" id="page-results">
+    <div class="section-title mb-4">Resultados de <span style="color:var(--gold);">Rifas</span></div>
+    <div class="card-dark">
+      <div style="overflow-x:auto;">
+        <table class="table-dark-custom">
+          <thead><tr><th>Rifa</th><th>Premio</th><th>Número Ganador</th><th>Ganador</th><th>Lotería</th><th>Fecha</th><th></th></tr></thead>
+          <tbody>
+            <tr><td><strong>Moto Yamaha MT-07</strong></td><td>Moto Yamaha</td><td><span class="winner-num">0423</span></td><td>Carlos Pérez</td><td>Baloto</td><td>15 May 2025</td><td><a style="color:var(--gold);font-size:.8rem;cursor:pointer;">Ver →</a></td></tr>
+            <tr><td><strong>iPhone 15 Pro</strong></td><td>iPhone 15 Pro</td><td><span class="winner-num">0017</span></td><td>María Rodríguez</td><td>Baloto</td><td>30 Abr 2025</td><td><a style="color:var(--gold);font-size:.8rem;cursor:pointer;">Ver →</a></td></tr>
+            <tr><td><strong>Toyota RAV4 2023</strong></td><td>Toyota RAV4</td><td><span class="winner-num">0891</span></td><td>Luis García</td><td>Baloto</td><td>10 Abr 2025</td><td><a style="color:var(--gold);font-size:.8rem;cursor:pointer;">Ver →</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- PAGE: ADMIN DASHBOARD -->
+  <!-- ============================================================ -->
+  <div class="page" id="page-admin-dashboard">
+    <div class="section-title mb-4">Dashboard <span style="color:var(--gold);">Administrativo</span></div>
+    <!-- KPIs -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-2 col-6"><div class="kpi-card kpi-green"><div class="kpi-label">Rifas Activas</div><div class="kpi-value">8</div><i class="bi bi-collection-fill kpi-icon"></i></div></div>
+      <div class="col-md-2 col-6"><div class="kpi-card kpi-purple"><div class="kpi-label">Usuarios</div><div class="kpi-value">1.2k</div><i class="bi bi-people-fill kpi-icon"></i></div></div>
+      <div class="col-md-2 col-6"><div class="kpi-card kpi-gold"><div class="kpi-label">Ingresos</div><div class="kpi-value" style="font-size:1.3rem;">$18.4M</div><i class="bi bi-cash-coin kpi-icon"></i></div></div>
+      <div class="col-md-2 col-6"><div class="kpi-card kpi-red"><div class="kpi-label">Pagos Pend.</div><div class="kpi-value">3</div><i class="bi bi-exclamation-circle-fill kpi-icon"></i></div></div>
+      <div class="col-md-2 col-6"><div class="kpi-card kpi-green"><div class="kpi-label">Boletas Hoy</div><div class="kpi-value">247</div><i class="bi bi-ticket-fill kpi-icon"></i></div></div>
+      <div class="col-md-2 col-6"><div class="kpi-card kpi-purple"><div class="kpi-label">Rifas Fin.</div><div class="kpi-value">14</div><i class="bi bi-trophy-fill kpi-icon"></i></div></div>
+    </div>
+    <div class="row g-3">
+      <!-- Gráfica de ventas -->
+      <div class="col-md-7">
+        <div class="card-dark">
+          <div class="card-body">
+            <div class="section-title mb-3">Ventas por <span>Día</span></div>
+            <div class="chart-placeholder" id="chartBars">
+              <div class="chart-bar" style="height:60%;background:linear-gradient(to top,var(--accent),var(--accent2));"></div>
+              <div class="chart-bar" style="height:80%;background:linear-gradient(to top,var(--accent),var(--accent2));"></div>
+              <div class="chart-bar" style="height:45%;background:linear-gradient(to top,var(--accent),var(--accent2));"></div>
+              <div class="chart-bar" style="height:90%;background:linear-gradient(to top,var(--gold),#e8941f);"></div>
+              <div class="chart-bar" style="height:70%;background:linear-gradient(to top,var(--accent),var(--accent2));"></div>
+              <div class="chart-bar" style="height:100%;background:linear-gradient(to top,var(--gold),#e8941f);"></div>
+              <div class="chart-bar" style="height:55%;background:linear-gradient(to top,var(--accent),var(--accent2));"></div>
+            </div>
+            <div style="display:flex;justify-content:space-around;margin-top:8px;font-size:.7rem;color:#555;">
+              <span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span><span>Dom</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Últimas transacciones -->
+      <div class="col-md-5">
+        <div class="card-dark">
+          <div class="card-body">
+            <div class="section-title mb-3">Últimas <span>Transacciones</span></div>
+            <table class="table-dark-custom">
+              <thead><tr><th>Usuario</th><th>Valor</th><th>Estado</th></tr></thead>
+              <tbody>
+                <tr><td style="font-size:.82rem;">Juan G.</td><td style="color:var(--gold);font-size:.82rem;">$60k</td><td><span class="badge-status badge-approved">Aprobado</span></td></tr>
+                <tr><td style="font-size:.82rem;">María R.</td><td style="color:var(--gold);font-size:.82rem;">$20k</td><td><span class="badge-status badge-pending">Pendiente</span></td></tr>
+                <tr><td style="font-size:.82rem;">Pedro L.</td><td style="color:var(--gold);font-size:.82rem;">$40k</td><td><span class="badge-status badge-approved">Aprobado</span></td></tr>
+                <tr><td style="font-size:.82rem;">Ana M.</td><td style="color:var(--gold);font-size:.82rem;">$15k</td><td><span class="badge-status badge-pending">Pendiente</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- PAGE: ADMIN RIFAS -->
+  <!-- ============================================================ -->
+  <div class="page" id="page-admin-raffles">
+    <div class="section-header mb-4">
+      <div class="section-title">Gestión de <span style="color:var(--gold);">Rifas</span></div>
+      <button class="btn-gold"><i class="bi bi-plus-lg"></i> Nueva Rifa</button>
+    </div>
+    <div class="card-dark">
+      <div style="overflow-x:auto;">
+        <table class="table-dark-custom">
+          <thead><tr><th>Nombre</th><th>Precio</th><th>Boletas</th><th>Vendidas</th><th>Fecha Sorteo</th><th>Estado</th><th>Acciones</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Toyota Corolla 2024</strong></td><td>$20.000</td><td>1.000</td><td><span style="color:var(--success-green);">650</span></td><td>15 Jun 2025</td><td><span class="badge-status badge-active">Activa</span></td><td><button style="background:none;border:none;color:var(--gold);cursor:pointer;"><i class="bi bi-pencil-fill"></i></button> <button style="background:none;border:none;color:#777;cursor:pointer;"><i class="bi bi-eye-fill"></i></button></td></tr>
+            <tr><td><strong>iPhone 16 Pro Max</strong></td><td>$5.000</td><td>500</td><td><span style="color:var(--success-green);">420</span></td><td>22 Jun 2025</td><td><span class="badge-status badge-active">Activa</span></td><td><button style="background:none;border:none;color:var(--gold);cursor:pointer;"><i class="bi bi-pencil-fill"></i></button> <button style="background:none;border:none;color:#777;cursor:pointer;"><i class="bi bi-eye-fill"></i></button></td></tr>
+            <tr><td><strong>Moto Yamaha MT-07</strong></td><td>$15.000</td><td>500</td><td>500</td><td>15 May 2025</td><td><span class="badge-status" style="background:rgba(123,94,167,.2);color:#c8a8ff;">Finalizada</span></td><td><button style="background:none;border:none;color:#777;cursor:pointer;"><i class="bi bi-eye-fill"></i></button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- PAGE: ADMIN BOLETAS -->
+  <!-- ============================================================ -->
+  <div class="page" id="page-admin-tickets">
+    <div class="section-title mb-4">Administrar <span style="color:var(--gold);">Boletas</span></div>
+    <div class="row g-3 mb-3">
+      <div class="col-md-5">
+        <div class="search-bar">
+          <i class="bi bi-search"></i>
+          <input type="text" placeholder="Buscar número de boleta..."/>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <select class="form-control-custom"><option>Todas las rifas</option><option>Toyota Corolla 2024</option><option>iPhone 16 Pro Max</option></select>
+      </div>
+      <div class="col-md-2">
+        <select class="form-control-custom"><option>Todos</option><option>Disponibles</option><option>Reservadas</option><option>Pagadas</option></select>
+      </div>
+    </div>
+    <div class="card-dark">
+      <div class="card-body">
+        <div class="legend mb-3">
+          <div class="legend-item"><div class="legend-dot" style="background:rgba(39,174,96,.4);border:1px solid var(--success-green);"></div><span style="color:#aaa;">Disponible</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:rgba(243,156,18,.4);border:1px solid var(--yellow-reserved);"></div><span style="color:#aaa;">Reservada</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:rgba(231,76,60,.4);border:1px solid var(--danger-red);"></div><span style="color:#aaa;">Pagada</span></div>
+        </div>
+        <div class="ticket-grid" id="adminTicketGrid"></div>
+        <div class="mt-3 d-flex gap-2 justify-content-end">
+          <button style="background:var(--dark3);border:1px solid var(--card-border);color:#ccc;border-radius:8px;padding:7px 14px;cursor:pointer;font-size:.82rem;"><i class="bi bi-unlock-fill"></i> Liberar reservas expiradas</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- PAGE: ADMIN PAGOS -->
+  <!-- ============================================================ -->
+  <div class="page" id="page-admin-payments">
+    <div class="section-title mb-4">Gestión de <span style="color:var(--gold);">Pagos</span></div>
+    <div class="card-dark">
+      <div style="overflow-x:auto;">
+        <table class="table-dark-custom">
+          <thead><tr><th>Transacción</th><th>Usuario</th><th>Rifa</th><th>Valor</th><th>Fecha</th><th>Estado</th><th></th></tr></thead>
+          <tbody>
+            <tr><td style="font-family:monospace;font-size:.8rem;color:var(--gold);">#WMP-2024-0892</td><td>Juan García</td><td>Toyota Corolla</td><td>$60.000</td><td>2 Jun 2025</td><td><span class="badge-status badge-approved">Aprobado</span></td><td><a style="color:var(--gold);font-size:.8rem;cursor:pointer;">Ver →</a></td></tr>
+            <tr><td style="font-family:monospace;font-size:.8rem;color:var(--gold);">#WMP-2024-0891</td><td>María Rodríguez</td><td>iPhone 16 Pro</td><td>$20.000</td><td>2 Jun 2025</td><td><span class="badge-status badge-pending">Pendiente</span></td><td><a style="color:var(--gold);font-size:.8rem;cursor:pointer;">Ver →</a></td></tr>
+            <tr><td style="font-family:monospace;font-size:.8rem;color:var(--gold);">#WMP-2024-0890</td><td>Pedro López</td><td>Moto Yamaha</td><td>$30.000</td><td>1 Jun 2025</td><td><span class="badge-status badge-pending">Pendiente</span></td><td><a style="color:var(--gold);font-size:.8rem;cursor:pointer;">Ver →</a></td></tr>
+            <tr><td style="font-family:monospace;font-size:.8rem;color:var(--gold);">#WMP-2024-0889</td><td>Ana Martínez</td><td>iPhone 16 Pro</td><td>$15.000</td><td>30 May 2025</td><td><span class="badge-status" style="background:rgba(100,100,100,.2);color:#777;">Expirado</span></td><td><a style="color:var(--gold);font-size:.8rem;cursor:pointer;">Ver →</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- PAGE: ADMIN USUARIOS -->
+  <!-- ============================================================ -->
+  <div class="page" id="page-admin-users">
+    <div class="section-header mb-4">
+      <div class="section-title">Gestión de <span style="color:var(--gold);">Usuarios</span></div>
+      <div class="search-bar" style="width:240px;"><i class="bi bi-search"></i><input type="text" placeholder="Buscar usuario..."/></div>
+    </div>
+    <div class="card-dark">
+      <div style="overflow-x:auto;">
+        <table class="table-dark-custom">
+          <thead><tr><th>Nombre</th><th>Correo</th><th>Documento</th><th>Boletas</th><th>Total</th><th>Estado</th><th>Acciones</th></tr></thead>
+          <tbody>
+            <tr><td><div style="display:flex;align-items:center;gap:8px;"><div class="avatar" style="width:28px;height:28px;font-size:.7rem;">JG</div> Juan García</div></td><td style="font-size:.82rem;">juan@correo.com</td><td style="font-size:.82rem;">12345678</td><td>5</td><td style="color:var(--gold);">$75k</td><td><span class="badge-status badge-active">Activo</span></td><td><button style="background:none;border:none;color:#777;cursor:pointer;"><i class="bi bi-eye-fill"></i></button> <button style="background:none;border:none;color:var(--danger-red);cursor:pointer;"><i class="bi bi-person-x-fill"></i></button></td></tr>
+            <tr><td><div style="display:flex;align-items:center;gap:8px;"><div class="avatar" style="width:28px;height:28px;font-size:.7rem;">MR</div> María Rodríguez</div></td><td style="font-size:.82rem;">maria@correo.com</td><td style="font-size:.82rem;">98765432</td><td>12</td><td style="color:var(--gold);">$220k</td><td><span class="badge-status badge-active">Activo</span></td><td><button style="background:none;border:none;color:#777;cursor:pointer;"><i class="bi bi-eye-fill"></i></button> <button style="background:none;border:none;color:var(--danger-red);cursor:pointer;"><i class="bi bi-person-x-fill"></i></button></td></tr>
+            <tr><td><div style="display:flex;align-items:center;gap:8px;"><div class="avatar" style="width:28px;height:28px;font-size:.7rem;">PL</div> Pedro López</div></td><td style="font-size:.82rem;">pedro@correo.com</td><td style="font-size:.82rem;">55544433</td><td>2</td><td style="color:var(--gold);">$30k</td><td><span class="badge-status badge-pending">Bloqueado</span></td><td><button style="background:none;border:none;color:#777;cursor:pointer;"><i class="bi bi-eye-fill"></i></button> <button style="background:none;border:none;color:var(--success-green);cursor:pointer;"><i class="bi bi-person-check-fill"></i></button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- PAGE: ADMIN SORTEOS -->
+  <!-- ============================================================ -->
+  <div class="page" id="page-admin-draws">
+    <div class="section-title mb-4">Gestión de <span style="color:var(--gold);">Sorteos</span></div>
+    <div class="row g-3">
+      <div class="col-md-7">
+        <div class="card-dark">
+          <div class="card-body">
+            <div class="section-title mb-3">Rifas Pendientes de Sorteo</div>
+            <table class="table-dark-custom">
+              <thead><tr><th>Rifa</th><th>Fecha Sorteo</th><th>Lotería</th><th>Estado Scraping</th><th></th></tr></thead>
+              <tbody>
+                <tr><td><strong>Toyota Corolla 2024</strong></td><td>15 Jun 2025</td><td>Baloto</td><td><span class="badge-status badge-reserved">Pendiente</span></td><td><a style="color:var(--gold);font-size:.8rem;cursor:pointer;">Gestionar →</a></td></tr>
+                <tr><td><strong>iPhone 16 Pro</strong></td><td>22 Jun 2025</td><td>Baloto</td><td><span class="badge-status badge-reserved">Pendiente</span></td><td><a style="color:var(--gold);font-size:.8rem;cursor:pointer;">Gestionar →</a></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-5">
+        <div class="card-dark">
+          <div class="card-body">
+            <div class="section-title mb-3">Validar <span>Ganador</span></div>
+            <div style="background:var(--dark3);border-radius:10px;padding:14px;margin-bottom:12px;">
+              <div style="font-size:.75rem;color:#666;margin-bottom:6px;">Resultado del Scraping – Baloto</div>
+              <div style="font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;color:var(--gold);">0 4 2 3 1 → <span style="color:#fff;">Serie 042</span></div>
+              <div style="font-size:.75rem;color:#666;margin-top:4px;">Boleta ganadora: <strong>0423</strong></div>
+            </div>
+            <div style="background:rgba(39,174,96,.1);border:1px solid rgba(39,174,96,.3);border-radius:8px;padding:10px;font-size:.83rem;margin-bottom:14px;">
+              <strong style="color:var(--success-green);">Ganador encontrado:</strong> Carlos Pérez – Boleta #0423
+            </div>
+            <div style="display:flex;gap:8px;">
+              <button class="btn-gold flex-fill"><i class="bi bi-check-circle-fill"></i> Aprobar Ganador</button>
+              <button style="background:rgba(231,76,60,.15);border:1px solid rgba(231,76,60,.4);color:var(--danger-red);border-radius:8px;padding:8px 14px;cursor:pointer;">Rechazar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- PAGE: ADMIN LOGS -->
+  <!-- ============================================================ -->
+  <div class="page" id="page-admin-logs">
+    <div class="section-title mb-4">Logs y <span style="color:var(--gold);">Auditoría</span></div>
+    <div class="card-dark">
+      <div style="overflow-x:auto;">
+        <table class="table-dark-custom">
+          <thead><tr><th>Fecha</th><th>Usuario</th><th>Acción</th><th>IP</th><th>Metadata</th></tr></thead>
+          <tbody>
+            <tr><td style="font-size:.78rem;color:#666;">02/06/2025 15:42</td><td>juan@correo.com</td><td><span style="color:var(--success-green);">PAYMENT_SUCCESS</span></td><td style="font-family:monospace;font-size:.78rem;">190.168.1.5</td><td style="font-size:.78rem;color:#666;">txn: WMP-0892</td></tr>
+            <tr><td style="font-size:.78rem;color:#666;">02/06/2025 15:40</td><td>juan@correo.com</td><td><span style="color:#aaa;">TICKETS_RESERVED</span></td><td style="font-family:monospace;font-size:.78rem;">190.168.1.5</td><td style="font-size:.78rem;color:#666;">boletas: 3</td></tr>
+            <tr><td style="font-size:.78rem;color:#666;">02/06/2025 14:22</td><td>admin</td><td><span style="color:var(--gold);">RAFFLE_CREATED</span></td><td style="font-family:monospace;font-size:.78rem;">192.168.0.1</td><td style="font-size:.78rem;color:#666;">rifa: iPhone 16 Pro</td></tr>
+            <tr><td style="font-size:.78rem;color:#666;">02/06/2025 13:11</td><td>pedro@correo.com</td><td><span style="color:var(--danger-red);">PAYMENT_FAILED</span></td><td style="font-family:monospace;font-size:.78rem;">190.168.2.9</td><td style="font-size:.78rem;color:#666;">motivo: fondos insuf.</td></tr>
+            <tr><td style="font-size:.78rem;color:#666;">02/06/2025 12:05</td><td>admin</td><td><span style="color:#aaa;">USER_BLOCKED</span></td><td style="font-family:monospace;font-size:.78rem;">192.168.0.1</td><td style="font-size:.78rem;color:#666;">user: pedro@correo.com</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- PAGE: ADMIN SETTINGS -->
+  <!-- ============================================================ -->
+  <div class="page" id="page-admin-settings">
+    <div class="section-title mb-4">Configuración del <span style="color:var(--gold);">Sistema</span></div>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <div class="card-dark"><div class="card-body">
+          <div style="font-weight:700;margin-bottom:14px;"><i class="bi bi-clock" style="color:var(--gold);"></i> Tiempos de Reserva</div>
+          <div class="mb-3"><div class="form-label-custom">Tiempo de reserva (minutos)</div><input class="form-control-custom" value="10"/></div>
+          <div class="mb-3"><div class="form-label-custom">Tiempo máximo checkout (minutos)</div><input class="form-control-custom" value="10"/></div>
+        </div></div>
+      </div>
+      <div class="col-md-6">
+        <div class="card-dark"><div class="card-body">
+          <div style="font-weight:700;margin-bottom:14px;"><i class="bi bi-credit-card" style="color:var(--gold);"></i> Configuración Wompi</div>
+          <div class="mb-3"><div class="form-label-custom">API Key Pública</div><input class="form-control-custom" value="pub_test_xxx..."/></div>
+          <div class="mb-3"><div class="form-label-custom">API Key Privada</div><input class="form-control-custom" type="password" value="prv_test_xxx..."/></div>
+        </div></div>
+      </div>
+      <div class="col-md-6">
+        <div class="card-dark"><div class="card-body">
+          <div style="font-weight:700;margin-bottom:14px;"><i class="bi bi-envelope" style="color:var(--gold);"></i> Correo SMTP</div>
+          <div class="mb-3"><div class="form-label-custom">Host SMTP</div><input class="form-control-custom" value="smtp.gmail.com"/></div>
+          <div class="mb-3"><div class="form-label-custom">Puerto</div><input class="form-control-custom" value="587"/></div>
+          <div class="mb-3"><div class="form-label-custom">Correo remitente</div><input class="form-control-custom" value="noreply@rifamax.co"/></div>
+        </div></div>
+      </div>
+      <div class="col-md-6">
+        <div class="card-dark"><div class="card-body">
+          <div style="font-weight:700;margin-bottom:14px;"><i class="bi bi-dice-6" style="color:var(--gold);"></i> Sorteos</div>
+          <div class="mb-3"><div class="form-label-custom">Lotería por defecto</div><select class="form-control-custom"><option>Baloto</option><option>Chontico</option></select></div>
+          <div class="mb-3"><div class="form-label-custom">Scraping automático</div><select class="form-control-custom"><option>Activado</option><option>Desactivado</option></select></div>
+        </div></div>
+      </div>
+      <div class="col-12">
+        <button class="btn-gold" style="padding:11px 28px;"><i class="bi bi-floppy-fill"></i> Guardar Configuración</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- Page indicator -->
+<div class="page-indicator">
+  <i class="bi bi-layout-sidebar" style="color:var(--gold);"></i>
+  <span>Vista: <span class="curr-page" id="pageIndicatorLabel">Inicio</span></span>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+<script>
+// ===== PAGE NAV =====
+const pageTitles = {
+  home: '🏠 Inicio',
+  raffles: '🎟️ Listado de Rifas',
+  'raffle-detail': '🚗 Detalle de Rifa',
+  login: '🔐 Login',
+  register: '📝 Registro',
+  checkout: '🛒 Checkout',
+  'payment-success': '✅ Pago Exitoso',
+  'payment-failed': '❌ Pago Rechazado',
+  'my-tickets': '🎫 Mis Participaciones',
+  profile: '👤 Perfil',
+  results: '🏆 Resultados',
+  'admin-dashboard': '⚡ Dashboard Admin',
+  'admin-raffles': '📋 Gestión de Rifas',
+  'admin-tickets': '🔢 Administrar Boletas',
+  'admin-payments': '💳 Gestión de Pagos',
+  'admin-users': '👥 Gestión de Usuarios',
+  'admin-draws': '🎲 Sorteos',
+  'admin-logs': '📜 Logs',
+  'admin-settings': '⚙️ Configuración',
+};
+
+function showPage(name, clickedEl) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link-item').forEach(l => l.classList.remove('active'));
+  const pg = document.getElementById('page-' + name);
+  if (pg) pg.classList.add('active');
+  if (clickedEl) clickedEl.classList.add('active');
+  document.getElementById('topbarTitle').textContent = pageTitles[name] || name;
+  document.getElementById('pageIndicatorLabel').textContent = (pageTitles[name] || name).replace(/^[^\s]+\s/, '');
+}
+
+// ===== TICKET GRID (detalle rifa) =====
+function buildTicketGrid(containerId, total, paid, reserved) {
+  const grid = document.getElementById(containerId);
+  if (!grid) return;
+  grid.innerHTML = '';
+  const selected = new Set();
+  for (let i = 1; i <= total; i++) {
+    const n = String(i).padStart(4, '0');
+    const div = document.createElement('div');
+    div.className = 'ticket';
+    div.textContent = n;
+    div.title = 'Boleta ' + n;
+    const rand = Math.random();
+    if (i <= paid) {
+      div.classList.add('paid');
+    } else if (i <= paid + reserved) {
+      div.classList.add('reserved');
+    } else {
+      div.classList.add('available');
+      div.addEventListener('click', () => {
+        if (selected.has(i)) {
+          selected.delete(i);
+          div.classList.remove('selected');
+          div.classList.add('available');
+        } else {
+          selected.add(i);
+          div.classList.remove('available');
+          div.classList.add('selected');
+        }
+        const countEl = document.getElementById('selected-count');
+        if (countEl) countEl.textContent = selected.size + ' seleccionada' + (selected.size !== 1 ? 's' : '');
+      });
+    }
+    grid.appendChild(div);
+  }
+}
+
+buildTicketGrid('ticketGrid', 100, 65, 12);
+buildTicketGrid('adminTicketGrid', 100, 65, 12);
+
+// ===== COUNTDOWN (hero) =====
+let h = 2, m = 34, s = 17;
+setInterval(() => {
+  s--;
+  if (s < 0) { s = 59; m--; }
+  if (m < 0) { m = 59; h--; }
+  if (h < 0) { h = 0; m = 0; s = 0; }
+  const fh = document.getElementById('cnt-h');
+  const fm = document.getElementById('cnt-m');
+  const fs = document.getElementById('cnt-s');
+  if (fh) fh.textContent = String(h).padStart(2,'0');
+  if (fm) fm.textContent = String(m).padStart(2,'0');
+  if (fs) fs.textContent = String(s).padStart(2,'0');
+}, 1000);
+
+// ===== CHECKOUT TIMER =====
+let ct = 9 * 60 + 47;
+setInterval(() => {
+  if (ct > 0) ct--;
+  const el = document.getElementById('checkout-timer');
+  if (el) el.textContent = String(Math.floor(ct/60)).padStart(2,'0') + ':' + String(ct%60).padStart(2,'0');
+}, 1000);
+</script>
+</body>
+</html>

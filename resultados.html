@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Resultados de Sorteos | RifaMax</title>
+
+    <meta
+      name="description"
+      content="Consulta los resultados oficiales de las rifas realizadas en RifaMax."
+    />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+
+  <body>
+    <!-- NAVBAR -->
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+      <div class="container">
+        <a
+          class="navbar-brand fw-bold"
+          href="index.html"
+          aria-label="Ir al inicio"
+        >
+          🎟️ RifaMax
+        </a>
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#menu"
+          aria-controls="menu"
+          aria-expanded="false"
+          aria-label="Abrir menú"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="menu">
+          <ul class="navbar-nav ms-auto align-items-lg-center">
+            <li class="nav-item">
+              <a class="nav-link active" href="index.html">Inicio</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="rifas.html">Rifas</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="resultados.html">Resultados</a>
+            </li>
+
+            <li class="nav-item">
+              <a
+                class="btn btn-outline-light ms-lg-2 mt-2 mt-lg-0"
+                href="login.html"
+              >
+                Iniciar Sesión
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a
+                class="btn btn-warning ms-lg-2 mt-2 mt-lg-0"
+                href="registro.html"
+              >
+                Registrarse
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- HEADER -->
+
+    <section class="bg-light py-5">
+      <div class="container">
+        <h1 class="fw-bold">Resultados de Sorteos</h1>
+
+        <p class="text-muted mb-0">
+          Consulta los ganadores oficiales de nuestras rifas.
+        </p>
+      </div>
+    </section>
+
+    <!-- FILTROS -->
+
+    <section class="container py-4">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-lg-6">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Buscar rifa..."
+                id="searchResults"
+              />
+            </div>
+
+            <div class="col-lg-3">
+              <input type="date" class="form-control" id="dateFilter" />
+            </div>
+
+            <div class="col-lg-3">
+              <button class="btn btn-primary w-100">Buscar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULTADOS -->
+
+    <section class="container pb-5">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header fw-semibold">Historial de Sorteos</div>
+
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Rifa</th>
+                  <th>Número Ganador</th>
+                  <th>Ganador</th>
+                  <th>Estado</th>
+                  <th></th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr>
+                  <td>15/08/2026</td>
+
+                  <td>Mazda CX-30 2026</td>
+
+                  <td>
+                    <span class="badge bg-success fs-6"> 1234-001 </span>
+                  </td>
+
+                  <td>Juan Pérez</td>
+
+                  <td>
+                    <span class="badge bg-primary"> Entregado </span>
+                  </td>
+
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary">
+                      Evidencia
+                    </button>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>02/08/2026</td>
+
+                  <td>iPhone 17 Pro</td>
+
+                  <td>
+                    <span class="badge bg-success fs-6"> 5678-222 </span>
+                  </td>
+
+                  <td>María Gómez</td>
+
+                  <td>
+                    <span class="badge bg-primary"> Entregado </span>
+                  </td>
+
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary">
+                      Evidencia
+                    </button>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>20/07/2026</td>
+
+                  <td>PlayStation 6</td>
+
+                  <td>
+                    <span class="badge bg-success fs-6"> 8888-777 </span>
+                  </td>
+
+                  <td>Carlos Ruiz</td>
+
+                  <td>
+                    <span class="badge bg-primary"> Entregado </span>
+                  </td>
+
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary">
+                      Evidencia
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+
+    <footer class="bg-dark text-white py-4">
+      <div class="container text-center">
+        <p class="mb-1">© 2026 RifaMax</p>
+
+        <small> Todos los derechos reservados. </small>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
